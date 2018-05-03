@@ -171,15 +171,12 @@ which should be treated by all nodes.
 
 		Node currentNode = firstNode_;
 		Packet packet = new Packet("BROADCAST", firstNode_.name_, firstNode_.name_);
+		String parameter;
 		do {
 			try {
-				report.write("\tNode '");
-				report.write(currentNode.name_);
-				report.write("' accepts broadcase packet.\n");
-				report.write("\tNode '");
-				report.write(currentNode.name_);
-				report.write("' passes packet on.\n");
-				report.flush();
+				parameter = currentNode.name_;
+				
+				logging(report, parameter,false);
 			} catch (IOException exc) {
 				// just ignore
 			};
@@ -220,7 +217,7 @@ Therefore #receiver sends a packet across the token ring network, until either
 		} catch (IOException exc) {
 			// just ignore
 		};
-
+		String parameter;
 		boolean result = false;
 		Node startNode, currentNode;
 		Packet packet = new Packet(document, workstation, printer);
@@ -228,10 +225,8 @@ Therefore #receiver sends a packet across the token ring network, until either
 		startNode = (Node) workstations_.get(workstation);
 
 		try {
-			report.write("\tNode '");
-			report.write(startNode.name_);
-			report.write("' passes packet on.\n");
-			report.flush();
+			parameter = startNode.name_;
+			logging(report, parameter,true);
 		} catch (IOException exc) {
 			// just ignore
 		};
@@ -239,10 +234,8 @@ Therefore #receiver sends a packet across the token ring network, until either
 		while ((! packet.destination_.equals(currentNode.name_))
 				& (! packet.origin_.equals(currentNode.name_))) {
 			try {
-				report.write("\tNode '");
-				report.write(currentNode.name_);
-				report.write("' passes packet on.\n");
-				report.flush();
+				parameter = currentNode.name_;
+				logging(report, parameter,true);
 			} catch (IOException exc) {
 				// just ignore
 			};
@@ -263,6 +256,23 @@ Therefore #receiver sends a packet across the token ring network, until either
 
 		return result;
 	}
+
+	private void logging(Writer report, String parameter, boolean flag) throws IOException {
+		if(flag){
+			report.write("\tNode '");
+			report.write(parameter);
+			report.write("' passes packet on.\n");
+			report.flush();
+		}else{
+			report.write("\tNode '");
+			report.write(parameter);
+			report.write("' accepts broadcase packet.\n");
+			report.write("\tNode '");
+			report.write(parameter);
+			report.write("' passes packet on.\n");
+			report.flush();
+			}
+		}
 
 	private boolean printDocument (Node printer, Packet document, Writer report) {
 		String author = "Unknown";
