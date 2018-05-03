@@ -249,11 +249,11 @@ the tests should work as expected.
 	    Network network = Network.DefaultExample();
 	    StringWriter report = new StringWriter(100);
 	    try{
-	    	network.requestWorkstationPrintsDocument("UnknownWorkstation","does not matter", "does not matter", report);
+	    network.requestWorkstationPrintsDocument("UnknownWorkstation",
+					      "does not matter", "does not matter", report);
 	    }catch(AssertionError e){
-	    	System.out.println(" ");;
+	    	System.out.println("..");
 	    }
-	    
 	}
 
   

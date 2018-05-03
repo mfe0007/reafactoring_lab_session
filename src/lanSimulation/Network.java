@@ -40,7 +40,7 @@ public class Network {
 	 * Holds a pointer to some "first" node in the token ring. Used to ensure
 	 * that various printing operations return expected behaviour.
 	 */
-	private Node firstNode_;
+	public Node firstNode_;
 	/**
 	 * Maps the names of workstations on the actual workstations. Used to
 	 * initiate the requests for the network.
@@ -223,7 +223,7 @@ public class Network {
 			try {
 				parameter = currentNode.name_;
 				
-				logging(report, parameter,false);
+				firstNode_.logging(report, parameter,false);
 			} catch (IOException exc) {
 				// just ignore
 			}
@@ -288,7 +288,7 @@ public class Network {
 
 		try {
 			parameter = startNode.name_;
-			logging(report, parameter, true);
+			firstNode_.logging(report, parameter, true);
 		} catch (IOException exc) {
 			// just ignore
 		}
@@ -297,7 +297,7 @@ public class Network {
 		while ((!packet.destination_.equals(currentNode.name_)) & (!packet.origin_.equals(currentNode.name_))) {
 			try {
 				parameter = currentNode.name_;
-				logging(report, parameter, true);
+				firstNode_.logging(report, parameter, true);
 			} catch (IOException exc) {
 				// just ignore
 			}
@@ -307,7 +307,7 @@ public class Network {
 		;
 
 		if (packet.destination_.equals(currentNode.name_)) {
-			result = printDocument(currentNode, packet, report);
+			result = currentNode.printDocument(this, packet, report);
 		} else {
 			try {
 				report.write(">>> Destinition not found, print job cancelled.\n\n");
@@ -320,90 +320,6 @@ public class Network {
 		}
 
 		return result;
-	}
-
-	private void logging(Writer report, String parameter, boolean flag) throws IOException {
-		if (flag) {
-			report.write("\tNode '");
-			report.write(parameter);
-			report.write("' passes packet on.\n");
-			report.flush();
-		} else {
-			report.write("\tNode '");
-			report.write(parameter);
-			report.write("' accepts broadcase packet.\n");
-			report.write("\tNode '");
-			report.write(parameter);
-			report.write("' passes packet on.\n");
-			report.flush();
-		}
-	}
-
-	private boolean printDocument(Node printer, Packet document, Writer report) {
-		String author = "Unknown";
-		String title = "Untitled";
-		int startPos = 0, endPos = 0;
-
-		if (printer.type_ == Node.PRINTER) {
-			try {
-				if (document.message_.startsWith("!PS")) {
-					startPos = document.message_.indexOf("author:");
-					if (startPos >= 0) {
-						endPos = document.message_.indexOf(".", startPos + 7);
-						if (endPos < 0) {
-							endPos = document.message_.length();
-						}
-						;
-						author = document.message_.substring(startPos + 7, endPos);
-					}
-					;
-					startPos = document.message_.indexOf("title:");
-					if (startPos >= 0) {
-						endPos = document.message_.indexOf(".", startPos + 6);
-						if (endPos < 0) {
-							endPos = document.message_.length();
-						}
-						;
-						title = document.message_.substring(startPos + 6, endPos);
-					}
-					;
-					accounting(report, author, title);
-					report.write(">>> Postscript job delivered.\n\n");
-					report.flush();
-				} else {
-					title = "ASCII DOCUMENT";
-					if (document.message_.length() >= 16) {
-						author = document.message_.substring(8, 16);
-					}
-					;
-					accounting(report, author, title);
-					report.write(">>> ASCII Print job delivered.\n\n");
-					report.flush();
-				}
-				;
-			} catch (IOException exc) {
-				// just ignore
-			}
-			;
-			return true;
-		} else {
-			try {
-				report.write(">>> Destinition is not a printer, print job cancelled.\n\n");
-				report.flush();
-			} catch (IOException exc) {
-				// just ignore
-			}
-			;
-			return false;
-		}
-	}
-
-	private void accounting(Writer report, String author, String title) throws IOException {
-		report.write("\tAccounting -- author = '");
-		report.write(author);
-		report.write("' -- title = '");
-		report.write(title);
-		report.write("'\n");
 	}
 
 	/**
@@ -428,6 +344,13 @@ public class Network {
 	public void printOn(StringBuffer buf) {
 		assert isInitialized();
 		Node currentNode = firstNode_;
+		String v1 = (" -> "); 
+		String v2 = (" ... "); 
+
+		switchNode(buf, currentNode, v1, v2);
+	}
+
+	private void switchNode(StringBuffer buf, Node currentNode, String v1, String v2) {
 		do {
 			switch (currentNode.type_) {
 			case Node.NODE:
@@ -451,10 +374,11 @@ public class Network {
 				break;
 			}
 			;
-			buf.append(" -> ");
+			
+			buf.append(v1);
 			currentNode = currentNode.nextNode_;
 		} while (currentNode != firstNode_);
-		buf.append(" ... ");
+		buf.append(v2);
 	}
 
 	/**
@@ -469,6 +393,9 @@ public class Network {
 		buf.append("<HTML>\n<HEAD>\n<TITLE>LAN Simulation</TITLE>\n</HEAD>\n<BODY>\n<H1>LAN SIMULATION</H1>");
 		Node currentNode = firstNode_;
 		buf.append("\n\n<UL>");
+		
+		
+		
 		do {
 			buf.append("\n\t<LI> ");
 			switch (currentNode.type_) {
@@ -493,10 +420,13 @@ public class Network {
 				break;
 			}
 			;
-			buf.append(" </LI>");
+			String v1 = (" </LI>");
+
+			buf.append(v1);
 			currentNode = currentNode.nextNode_;
 		} while (currentNode != firstNode_);
-		buf.append("\n\t<LI>...</LI>\n</UL>\n\n</BODY>\n</HTML>\n");
+		String v1 = ("\n\t<LI>...</LI>\n</UL>\n\n</BODY>\n</HTML>\n");
+		buf.append(v1);
 	}
 
 	/**
