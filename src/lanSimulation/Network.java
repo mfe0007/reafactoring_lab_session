@@ -311,7 +311,7 @@ public class Network {
 		;
 
 		if (packet.destination_.equals(currentNode.name_)) {
-			result = currentNode.printDocument(this, packet, report);
+			result = packet.printDocument(this, currentNode, report);
 		} else {
 			try {
 				report.write(">>> Destinition not found, print job cancelled.\n\n");
