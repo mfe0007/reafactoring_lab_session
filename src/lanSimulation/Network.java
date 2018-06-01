@@ -355,7 +355,7 @@ public class Network {
 		String v1 = (" -> "); 
 		String v2 = (" ... "); 
 
-		firstNode_.switchNode(this, buf, currentNode, v1, v2);
+		((Workstation) firstNode_).printON(this, buf, currentNode, v1, v2);
 	}
 
 	/**
@@ -373,7 +373,7 @@ public class Network {
 		
 		
 		
-		firstNode_.switchPrintHTMLOn(this, buf, currentNode);
+		((Workstation) firstNode_).printHTMLOn(this, buf, currentNode);
 	}
 
 	/**
@@ -387,7 +387,7 @@ public class Network {
 
 		Node currentNode = firstNode_;
 		buf.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\n<network>");
-		firstNode_.switchPrintXMLOn(this, buf, currentNode);
+		((Workstation) firstNode_).printXMLOn(this, buf, currentNode);
 	}
 
 }
