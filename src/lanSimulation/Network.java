@@ -373,7 +373,7 @@ public class Network {
 		
 		
 		
-		((Workstation) firstNode_).printHTMLOn(this, buf, currentNode);
+		firstNode_.printHTMLOn(this, buf, currentNode);
 	}
 
 	/**
@@ -387,7 +387,7 @@ public class Network {
 
 		Node currentNode = firstNode_;
 		buf.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\n<network>");
-		((Workstation) firstNode_).printXMLOn(this, buf, currentNode);
+		 firstNode_.printXMLOn(this, buf, currentNode);
 	}
 
 }
